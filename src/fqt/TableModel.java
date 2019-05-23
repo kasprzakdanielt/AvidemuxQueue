@@ -1,4 +1,4 @@
-package sample;
+package fqt;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

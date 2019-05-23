@@ -1,4 +1,4 @@
-package sample;
+package fqt;
 
 
 import javafx.collections.FXCollections;
