@@ -9,6 +9,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,7 +46,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         audiocodec_combobox.getItems().removeAll();
-        audiocodec_combobox.getItems().addAll("ac3", "AC3(laften)");
+        audiocodec_combobox.getItems().addAll("ac3", "mp3", "aac", "flac");
         filename_column.setCellValueFactory(new PropertyValueFactory<>("FileName"));
         audio_column.setCellValueFactory(new PropertyValueFactory<>("AudioCodec"));
         status_column.setCellValueFactory(new PropertyValueFactory<>("Status"));
@@ -54,6 +56,21 @@ public class Controller implements Initializable {
     @FXML
     private void comboboxaction() {
         this.output_audiocodec = audiocodec_combobox.getSelectionModel().getSelectedItem();
+    }
+
+    @FXML
+    private void path_chooser() {
+        Stage stage = (Stage) fileList.getScene().getWindow();
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+
+        File selectedDirectory = directoryChooser.showDialog(stage);
+
+        if (selectedDirectory != null) {
+
+            output_path.setText(selectedDirectory.getAbsolutePath());
+        }
+
+
     }
 
     @FXML
@@ -68,30 +85,36 @@ public class Controller implements Initializable {
                 tableData.forEach((temp) -> {
                     filename = temp.getFileName();
                     filepath = temp.getFilepath();
-                    String destination = output_path.getText() + filename;
+                    String destination = output_path.getText() + "\\" + filename;
 
-                    start_conversion(destination, filepath);
-
+                    temp.setStatus(start_conversion(destination, filepath));
+                    fileList.refresh();
 
                 });
             }).start();
         }
     }
 
-    private void start_conversion(String destination, String filepath) {
-
-        String query = String.format("libs\\ffmpeg-4.1.3-win64-static\\bin\\ffmpeg.exe -loglevel quiet -i %s -c:v copy -c:a %s %s", filepath, output_audiocodec, destination);
+    private String start_conversion(String destination, String filepath) {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        File file = new File("libs\\ffmpeg-4.1.3-win64-static\\bin\\ffmpeg.exe");//full file path URL
+        String absolutePath = file.getAbsolutePath();
+        String query = String.format("%s -loglevel error -i %s -c:v copy -c:a %s %s", absolutePath, filepath, output_audiocodec, destination);
         System.out.println(query);
         try {
-            Process p = Runtime.getRuntime().exec(query);
+            processBuilder.command("cmd.exe", "/c", query);
+            Process p = processBuilder.start();
             p.waitFor();
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            System.out.println(input.readLine());
+            if (input.readLine() != null) {
+                return "Error";
+            }
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
-
+        return "Success";
     }
 
     private void warning_dialog(String message) {
