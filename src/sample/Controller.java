@@ -58,43 +58,40 @@ public class Controller implements Initializable {
 
     @FXML
     private void start_pressed() {
-        new Thread(() -> {
-        tableData.forEach((temp) -> {
-            filename = temp.getFileName();
-            filepath = temp.getFilepath();
-            String destination = output_path.getText() + filename;
-
-                start_conversion(destination, filepath);
-
-
-        });
-        }).start();
-
-    }
-
-    private void start_conversion(String destination, String filepath) {
-
-        String query = String.format("libs\\ffmpeg-4.1.3-win64-static\\bin\\ffmpeg.exe -loglevel quiet -i %s -c:v copy -c:a %s %s", filepath, output_audiocodec, destination);
-        System.out.println(query);
         if (output_audiocodec.equals("")) {
             warning_dialog("Output codec is not selected");
         }
         if (output_path.getText().isEmpty()) {
             warning_dialog("Destination was not specified");
         } else {
+            new Thread(() -> {
+                tableData.forEach((temp) -> {
+                    filename = temp.getFileName();
+                    filepath = temp.getFilepath();
+                    String destination = output_path.getText() + filename;
+
+                    start_conversion(destination, filepath);
 
 
-            try {
-                Process p = Runtime.getRuntime().exec(query);
-                p.waitFor();
-                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                System.out.println(input.readLine());
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-
-
+                });
+            }).start();
         }
+    }
+
+    private void start_conversion(String destination, String filepath) {
+
+        String query = String.format("libs\\ffmpeg-4.1.3-win64-static\\bin\\ffmpeg.exe -loglevel quiet -i %s -c:v copy -c:a %s %s", filepath, output_audiocodec, destination);
+        System.out.println(query);
+        try {
+            Process p = Runtime.getRuntime().exec(query);
+            p.waitFor();
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            System.out.println(input.readLine());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private void warning_dialog(String message) {

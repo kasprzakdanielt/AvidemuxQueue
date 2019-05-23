@@ -11,7 +11,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("scene1.fxml"));
-        primaryStage.setTitle("AvidemuxQueueTool");
+        primaryStage.setTitle("FFMPEG Queue Tool");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
