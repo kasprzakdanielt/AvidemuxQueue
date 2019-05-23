@@ -7,15 +7,21 @@ public class TableModel {
     private final StringProperty fileName;
     private final StringProperty audioCodec;
     private final StringProperty status;
+    private final String filepath;
 
     public TableModel() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
-    public TableModel(String fileName, String audioCodec, String status) {
+    public TableModel(String fileName, String audioCodec, String status, String filepath) {
         this.fileName = new SimpleStringProperty(fileName);
         this.audioCodec = new SimpleStringProperty(audioCodec);
         this.status = new SimpleStringProperty(status);
+        this.filepath = filepath;
+    }
+
+    public String getFilepath() {
+        return filepath;
     }
 
     public String getFileName() {
