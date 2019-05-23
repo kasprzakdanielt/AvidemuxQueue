@@ -19,7 +19,7 @@
                   <Label text="Choose output audiocodec" />
                   <ComboBox fx:id="audiocodec_combobox" onAction="#comboboxaction" prefWidth="150.0" promptText="Audio" visibleRowCount="3" />
                   <Label text="Output location" />
-                  <TextField fx:id="output_path" />
+                  <TextField fx:id="output_path" onMouseClicked="#path_chooser" />
                   <Button fx:id="start_button" mnemonicParsing="false" onMousePressed="#start_pressed" text="Start" />
                </children>
             </VBox>
