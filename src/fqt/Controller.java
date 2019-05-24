@@ -26,9 +26,11 @@ public class Controller implements Initializable {
     public Button start_button;
     public Button add_button;
     public TextField output_path;
+    public ProgressBar progress_bar;
     private String output_audiocodec = "";
     private String filepath = "";
     private String filename = "";
+    private Double done_files = 0.0;
     @FXML
     private ComboBox<String> audiocodec_combobox;
     @FXML
@@ -39,7 +41,6 @@ public class Controller implements Initializable {
     TableColumn<TableModel, String> audio_column;
     @FXML
     TableColumn<TableModel, String> status_column;
-
 
     private ObservableList<TableModel> tableData = FXCollections.observableArrayList();
 
@@ -52,7 +53,6 @@ public class Controller implements Initializable {
         status_column.setCellValueFactory(new PropertyValueFactory<>("Status"));
     }
 
-
     @FXML
     private void comboboxaction() {
         this.output_audiocodec = audiocodec_combobox.getSelectionModel().getSelectedItem();
@@ -62,15 +62,10 @@ public class Controller implements Initializable {
     private void path_chooser() {
         Stage stage = (Stage) fileList.getScene().getWindow();
         DirectoryChooser directoryChooser = new DirectoryChooser();
-
         File selectedDirectory = directoryChooser.showDialog(stage);
-
         if (selectedDirectory != null) {
-
             output_path.setText(selectedDirectory.getAbsolutePath());
         }
-
-
     }
 
     @FXML
@@ -82,22 +77,30 @@ public class Controller implements Initializable {
             warning_dialog("Destination was not specified");
         } else {
             new Thread(() -> {
+                progress_bar.setProgress(0.0);
+                done_files = 0.0;
+                Integer table_size = tableData.size();
                 tableData.forEach((temp) -> {
                     filename = temp.getFileName();
                     filepath = temp.getFilepath();
                     String destination = output_path.getText() + "\\" + filename;
-
                     temp.setStatus(start_conversion(destination, filepath));
                     fileList.refresh();
-
+                    System.out.println(tableData.size());
+                    progress(table_size);
                 });
             }).start();
         }
     }
 
+    private void progress(Integer table_size) {
+        done_files += 1.0;
+        progress_bar.setProgress((done_files / table_size));
+    }
+
     private String start_conversion(String destination, String filepath) {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        File file = new File("libs\\ffmpeg-4.1.3-win64-static\\bin\\ffmpeg.exe");//full file path URL
+        File file = new File("libs\\ffmpeg-4.1.3-win64-static\\bin\\ffmpeg.exe");
         String absolutePath = file.getAbsolutePath();
         String query = String.format("%s -loglevel error -i %s -c:v copy -c:a %s %s", absolutePath, filepath, output_audiocodec, destination);
         System.out.println(query);
@@ -109,11 +112,9 @@ public class Controller implements Initializable {
             if (input.readLine() != null) {
                 return "Error";
             }
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
         return "Success";
     }
 
@@ -137,20 +138,22 @@ public class Controller implements Initializable {
     @FXML
     private void handleDrop(DragEvent event) {
         List<File> files = event.getDragboard().getFiles();
-        String audiocodec = "Error";
-        filepath = files.get(0).getAbsolutePath();
-        String query = String.format("libs\\ffmpeg-4.1.3-win64-static\\bin\\ffprobe.exe -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 %s", files.get(0).getAbsolutePath());
-        try {
-            Process p = Runtime.getRuntime().exec(query);
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            audiocodec = input.readLine();
-            filename = files.get(0).getName();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        tableData.add(new TableModel(filename, audiocodec, "Waiting", filepath));
+        new Thread(() -> {
+            files.forEach(file -> {
+                String audiocodec = "Error";
+                filepath = file.getAbsolutePath();
+                String query = String.format("libs\\ffmpeg-4.1.3-win64-static\\bin\\ffprobe.exe -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 %s", files.get(0).getAbsolutePath());
+                try {
+                    Process p = Runtime.getRuntime().exec(query);
+                    BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                    audiocodec = input.readLine();
+                    filename = file.getName();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                tableData.add(new TableModel(filename, audiocodec, "Waiting", filepath));
+            });
+        }).start();
         fileList.setItems(tableData);
-
-
     }
 }
