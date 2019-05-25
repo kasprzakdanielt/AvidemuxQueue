@@ -7,3 +7,11 @@ Easy to use, simple app with integrated ffmpeg, allowing conversion from one aud
 
 
 Still in development.
+
+
+
+## Issues & Questions
+If you have any questions or issues:
+[Add a ticket here](https://github.com/kasprzakdanielt/SOAPUIReportingTool/issues)
+or 
+[Email me](mailto:kasprzak.daniel.kontakt@gmail.com)
