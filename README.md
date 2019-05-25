@@ -12,6 +12,6 @@ Still in development.
 
 ## Issues & Questions
 If you have any questions or issues:
-[Add a ticket here](https://github.com/kasprzakdanielt/SOAPUIReportingTool/issues)
+[Add a ticket here](https://github.com/kasprzakdanielt/FFMPEGQueueTool/issues)
 or 
 [Email me](mailto:kasprzak.daniel.kontakt@gmail.com)
