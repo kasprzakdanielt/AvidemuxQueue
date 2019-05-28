@@ -30,6 +30,10 @@ public class Controller implements Initializable {
     private String filepath = "";
     private String filename = "";
     private Double done_files = 0.0;
+    private String ffprobe_path = System.getProperty("user.dir") + "/ffmpeg-4.1.3-win64-static/bin/ffprobe.exe";
+    private String ffmpeg_path = System.getProperty("user.dir") + "/ffmpeg-4.1.3-win64-static/bin/ffmpeg.exe";
+
+
     @FXML
     private ComboBox<String> audiocodec_combobox;
     @FXML
@@ -85,7 +89,6 @@ public class Controller implements Initializable {
                     String destination = output_path.getText() + "\\" + filename;
                     temp.setStatus(start_conversion(destination, filepath));
                     fileList.refresh();
-                    System.out.println(tableData.size());
                     progress(table_size);
                 });
             }).start();
@@ -99,9 +102,7 @@ public class Controller implements Initializable {
 
     private String start_conversion(String destination, String filepath) {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        File file = new File("fqt\\ffmpeg-4.1.3-win64-static\\bin\\ffmpeg.exe");
-        String absolutePath = file.getAbsolutePath();
-        String query = String.format("%s -loglevel error -i %s -c:v copy -c:a %s %s", absolutePath, filepath, output_audiocodec, destination);
+        String query = String.format("%s -loglevel error -i %s -c:v copy -c:a %s %s", ffmpeg_path, filepath, output_audiocodec, destination);
         System.out.println(query);
         try {
             processBuilder.command("cmd.exe", "/c", query);
@@ -135,14 +136,13 @@ public class Controller implements Initializable {
     }
     @FXML
     private void handleDrop(DragEvent event) {
+        System.out.println(ffprobe_path);
         List<File> files = event.getDragboard().getFiles();
-        System.out.println(getClass().getResource("ffprobe.exe").getPath());
         new Thread(() -> {
             files.forEach(file -> {
                 String audiocodec = "Error";
                 filepath = file.getAbsolutePath();
-
-                String query = String.format("fqt/ffmpeg-4.1.3-win64-static/bin/ffprobe.exe -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 %s", files.get(0).getAbsolutePath());
+                String query = String.format("%s -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 %s", ffprobe_path, files.get(0).getAbsolutePath());
                 try {
                     Process p = Runtime.getRuntime().exec(query);
                     BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
