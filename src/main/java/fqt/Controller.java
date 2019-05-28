@@ -129,14 +129,20 @@ public class Controller implements Initializable {
     @FXML
     private void handleDragOver(DragEvent event) {
         if (event.getDragboard().hasFiles()) {
-            if (event.getDragboard().getFiles().get(0).getName().toLowerCase().endsWith(".mkv")) {
+            final Boolean[] allow_drop = {true};
+            event.getDragboard().getFiles().forEach(item ->{
+                if(!item.getName().toLowerCase().endsWith(".mkv")){
+                    allow_drop[0] = false;
+                }
+            });
+            if (allow_drop[0]) {
                 event.acceptTransferModes(TransferMode.ANY);
             }
         }
     }
+
     @FXML
     private void handleDrop(DragEvent event) {
-        System.out.println(ffprobe_path);
         List<File> files = event.getDragboard().getFiles();
         new Thread(() -> {
             files.forEach(file -> {
