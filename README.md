@@ -8,9 +8,23 @@ Easy to use, simple app with integrated ffmpeg, allowing conversion from one aud
 
 Still in development.
 
+![MainWindow](https://i.imgur.com/xMzaWYO.png)
 
+## Features
+
+* Drag & drop files(accepts only .mkv)
+* Shows current audio codec(uses ffprobe)
+* FFMPEG is included, user doesnt need to have it installed
+
+## Configuration
+
+1. Drag one or more mkv files into the app window
+2. Click on output location box and specify where to save encoded files
+3. Choose which audio codec you want
+4. Press start and wait :)
 
 ## Issues & Questions
+Any feedback will be appreciated.
 If you have any questions or issues:
 [Add a ticket here](https://github.com/kasprzakdanielt/FFMPEGQueueTool/issues)
 or 
