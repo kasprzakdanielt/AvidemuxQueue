@@ -5,7 +5,7 @@ Easy to use, simple app with integrated ffmpeg, allowing conversion from one aud
 
 First version is available here: [FFMPEG MKV AudioCodec Changer](https://github.com/kasprzakdanielt/FFMPEG-MKV-AudioCodec-Changer/releases)
 
-
+I'll try to implement for the first time some jUnit tests. Never done that before tho...
 
 Still in development.
 
