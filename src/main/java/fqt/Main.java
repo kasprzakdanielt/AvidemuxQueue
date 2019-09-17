@@ -10,8 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root;
-        root = FXMLLoader.load(getClass().getResource("scene1.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("scene1.fxml"));
         primaryStage.setTitle("FFMPEG Queue Tool");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
