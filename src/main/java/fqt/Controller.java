@@ -30,8 +30,8 @@ public class Controller implements Initializable {
     private String filepath = "";
     private String filename = "";
     private Double done_files = 0.0;
-    private String ffprobe_path = System.getProperty("user.dir") + "/ffmpeg-4.1.3-win64-static/bin/ffprobe.exe";
-    private String ffmpeg_path = System.getProperty("user.dir") + "/ffmpeg-4.1.3-win64-static/bin/ffmpeg.exe";
+    private String ffprobe_path = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffprobe.exe";
+    private String ffmpeg_path = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffmpeg.exe";
 
 
     @FXML
