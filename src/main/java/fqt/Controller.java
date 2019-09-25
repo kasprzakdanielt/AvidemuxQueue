@@ -26,12 +26,6 @@ public class Controller implements Initializable {
     public ProgressBar progress_bar;
 
     private String output_audiocodec = "";
-    private String filepath = "";
-    private String filename = "";
-    private Double done_files = 0.0;
-    private String ffprobe_path = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffprobe.exe";
-    private String ffmpeg_path = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffmpeg.exe";
-
 
     @FXML
     private ComboBox<String> audiocodec_combobox;
@@ -79,7 +73,7 @@ public class Controller implements Initializable {
         if (event.getDragboard().hasFiles()) {
             final Boolean[] allow_drop = {true};
             event.getDragboard().getFiles().forEach(item -> {
-                if (!item.getName().toLowerCase().endsWith(".mkv")) {
+                if (!item.getName().toLowerCase().endsWith(".mp4")) {
                     allow_drop[0] = false;
                 }
             });

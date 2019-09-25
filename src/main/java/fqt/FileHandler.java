@@ -15,8 +15,8 @@ import java.util.List;
 import static fqt.DialogsHandler.warning_dialog;
 
 class FileHandler {
-    private static String ffprobe_path = System.getProperty("user.dir") + "/ffmpeg-4.1.3-win64-static/bin/ffprobe.exe";
-    private static String ffmpeg_path = System.getProperty("user.dir") + "/ffmpeg-4.1.3-win64-static/bin/ffmpeg.exe";
+    private static String ffprobe_path = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffprobe.exe";
+    private static String ffmpeg_path = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffmpeg.exe";
     private static double done_files = 0.0;
     static ObservableList<TableModel> tableData = FXCollections.observableArrayList();
 
