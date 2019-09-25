@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
+
 import java.util.ResourceBundle;
 
 import static fqt.FileHandler.startConversion;
@@ -25,6 +26,7 @@ public class Controller implements Initializable {
     public ProgressBar progressBar;
 
     private String outputAudiocodec = "";
+    private String[] acceptedExtensions = {".mkv", ".mp4"};
 
     @FXML
     private ComboBox<String> audiocodecCombobox;
@@ -37,6 +39,9 @@ public class Controller implements Initializable {
     @FXML
     TableColumn<TableModel, String> statusColumn;
 
+    TableView<TableModel> getFileList() {
+        return fileList;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -72,7 +77,7 @@ public class Controller implements Initializable {
         if (event.getDragboard().hasFiles()) {
             final Boolean[] allowDrop = {true};
             event.getDragboard().getFiles().forEach(item -> {
-                if (!item.getName().toLowerCase().endsWith(".mp4")) {
+                if (!checkIfFileHasExtension(item.getName().toLowerCase(), acceptedExtensions)) {
                     allowDrop[0] = false;
                 }
             });
@@ -82,6 +87,14 @@ public class Controller implements Initializable {
         }
     }
 
+    public static boolean checkIfFileHasExtension(String s, String[] extn) {
+        for (String entry : extn) {
+            if (s.endsWith(entry)) {
+                return true;
+            }
+        }
+        return false;
+    }
     @FXML
     private void handleDrop(DragEvent event) {
         fileList.setItems(ffmpegGetCodecs(event));
