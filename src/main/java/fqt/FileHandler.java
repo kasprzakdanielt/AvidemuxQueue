@@ -12,22 +12,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import static fqt.DialogsHandler.warning_dialog;
+import static fqt.DialogsHandler.warningDialog;
 
 class FileHandler {
-    private static String ffprobe_path = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffprobe.exe";
-    private static String ffmpeg_path = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffmpeg.exe";
-    private static double done_files = 0.0;
-    static ObservableList<TableModel> tableData = FXCollections.observableArrayList();
+    private static final String FFPROBE_PATH = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffprobe.exe";
+    private static final String FFMPEG_PATH = System.getProperty("user.dir") + "/ffmpeg-4.2.1-win64-static/bin/ffmpeg.exe";
+    private static double DoneFiles = 0.0;
+    private static ObservableList<TableModel> tableData = FXCollections.observableArrayList();
 
 
-    static ObservableList<TableModel> ffmpeg_get_codecs(DragEvent event){
+    static ObservableList<TableModel> ffmpegGetCodecs(DragEvent event){
         List<File> files = event.getDragboard().getFiles();
 
         new Thread(() -> {
             files.forEach(file -> {
                 String filepath = file.getAbsolutePath();
-                String query = String.format("%s -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 %s", ffprobe_path, files.get(0).getAbsolutePath());
+                String query = String.format("%s -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 %s", FFPROBE_PATH, files.get(0).getAbsolutePath());
                 try {
                     Process p = Runtime.getRuntime().exec(query);
                     BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -45,25 +45,25 @@ class FileHandler {
     }
 
 
-    static void Start_conversion(TableView<TableModel> fileList, String output_audiocodec, String output_path, ProgressBar progress_bar){
-        if (output_audiocodec.equals("")) {
-            warning_dialog("Output codec is not selected");
+    static void startConversion(TableView<TableModel> fileList, String outputAudiocodec, String outputPath, ProgressBar progressBar){
+        if (outputAudiocodec.equals("")) {
+            warningDialog("Output codec is not selected");
         }
-        if (output_path.isEmpty()) {
-            warning_dialog("Destination was not specified");
+        if (outputPath.isEmpty()) {
+            warningDialog("Destination was not specified");
         } else {
-            progress_bar.setProgress(0.0);
+            progressBar.setProgress(0.0);
 
             new Thread(() -> {
-                done_files = 0.0;
-                Integer table_size = FileHandler.tableData.size();
+                DoneFiles = 0.0;
+                Integer tableSize = FileHandler.tableData.size();
                 FileHandler.tableData.forEach((temp) -> {
                     String filename = temp.getFileName();
                     String filepath = temp.getFilepath();
-                    String destination = output_path + "\\" + filename;
-                    temp.setStatus(start_conversion(destination, filepath, output_audiocodec));
+                    String destination = outputPath + "\\" + filename;
+                    temp.setStatus(startConversion(destination, filepath, outputAudiocodec));
                     fileList.refresh();
-                    progress(table_size, progress_bar);
+                    progress(tableSize, progressBar);
                 });
             }).start();
 
@@ -72,14 +72,14 @@ class FileHandler {
 
     }
 
-    static void progress(Integer table_size, ProgressBar progress_bar) {
-        done_files += 1.0;
-        progress_bar.setProgress((done_files / table_size));
+    private static void progress(Integer tableSize, ProgressBar progressBar) {
+        DoneFiles += 1.0;
+        progressBar.setProgress((DoneFiles / tableSize));
     }
 
-    static private String start_conversion(String destination, String filepath, String output_audiocodec) {
+    private static String startConversion(String destination, String filepath, String outputAudiocodec) {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        String query = String.format("%s -loglevel error -i %s -c:v copy -c:a %s %s", ffmpeg_path, filepath, output_audiocodec, destination);
+        String query = String.format("%s -loglevel error -i %s -c:v copy -c:a %s %s", FFMPEG_PATH, filepath, outputAudiocodec, destination);
         System.out.println(query);
         try {
             processBuilder.command("cmd.exe", "/c", query);

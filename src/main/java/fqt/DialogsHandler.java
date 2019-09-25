@@ -5,7 +5,7 @@ import javafx.scene.control.Alert;
 class DialogsHandler {
 
 
-    static void warning_dialog(String message) {
+    static void warningDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Careful");
         alert.setHeaderText("User error");

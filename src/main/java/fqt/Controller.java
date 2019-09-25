@@ -1,6 +1,5 @@
 package fqt;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -14,70 +13,70 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static fqt.FileHandler.Start_conversion;
-import static fqt.FileHandler.ffmpeg_get_codecs;
+import static fqt.FileHandler.startConversion;
+import static fqt.FileHandler.ffmpegGetCodecs;
 
 
 public class Controller implements Initializable {
 
-    public Button start_button;
-    public Button add_button;
-    public TextField output_path;
-    public ProgressBar progress_bar;
+    public Button startButton;
+    public Button addButton;
+    public TextField outputPath;
+    public ProgressBar progressBar;
 
-    private String output_audiocodec = "";
+    private String outputAudiocodec = "";
 
     @FXML
-    private ComboBox<String> audiocodec_combobox;
+    private ComboBox<String> audiocodecCombobox;
     @FXML
     TableView<TableModel> fileList;
     @FXML
-    TableColumn<TableModel, String> filename_column;
+    TableColumn<TableModel, String> filenameColumn;
     @FXML
-    TableColumn<TableModel, String> audio_column;
+    TableColumn<TableModel, String> audioColumn;
     @FXML
-    TableColumn<TableModel, String> status_column;
+    TableColumn<TableModel, String> statusColumn;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        audiocodec_combobox.getItems().removeAll();
-        audiocodec_combobox.getItems().addAll("ac3", "mp3", "aac", "flac");
-        filename_column.setCellValueFactory(new PropertyValueFactory<>("FileName"));
-        audio_column.setCellValueFactory(new PropertyValueFactory<>("AudioCodec"));
-        status_column.setCellValueFactory(new PropertyValueFactory<>("Status"));
+        audiocodecCombobox.getItems().removeAll();
+        audiocodecCombobox.getItems().addAll("ac3", "mp3", "aac", "flac");
+        filenameColumn.setCellValueFactory(new PropertyValueFactory<>("FileName"));
+        audioColumn.setCellValueFactory(new PropertyValueFactory<>("AudioCodec"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("Status"));
     }
 
     @FXML
     private void comboboxaction() {
-        this.output_audiocodec = audiocodec_combobox.getSelectionModel().getSelectedItem();
+        this.outputAudiocodec = audiocodecCombobox.getSelectionModel().getSelectedItem();
     }
 
     @FXML
-    private void path_chooser() {
+    private void pathChooser() {
         Stage stage = (Stage) fileList.getScene().getWindow();
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(stage);
         if (selectedDirectory != null) {
-            output_path.setText(selectedDirectory.getAbsolutePath());
+            outputPath.setText(selectedDirectory.getAbsolutePath());
         }
     }
 
     @FXML
-    private void start_pressed() {
-        Start_conversion(fileList, output_audiocodec, output_path.getText(), progress_bar);
+    private void startPressed() {
+        startConversion(fileList, outputAudiocodec, outputPath.getText(), progressBar);
     }
 
     @FXML
     private void handleDragOver(DragEvent event) {
         if (event.getDragboard().hasFiles()) {
-            final Boolean[] allow_drop = {true};
+            final Boolean[] allowDrop = {true};
             event.getDragboard().getFiles().forEach(item -> {
                 if (!item.getName().toLowerCase().endsWith(".mp4")) {
-                    allow_drop[0] = false;
+                    allowDrop[0] = false;
                 }
             });
-            if (allow_drop[0]) {
+            if (allowDrop[0]) {
                 event.acceptTransferModes(TransferMode.ANY);
             }
         }
@@ -85,6 +84,6 @@ public class Controller implements Initializable {
 
     @FXML
     private void handleDrop(DragEvent event) {
-        fileList.setItems(ffmpeg_get_codecs(event));
+        fileList.setItems(ffmpegGetCodecs(event));
     }
 }
